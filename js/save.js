@@ -4,7 +4,7 @@ import { THEOREMS } from './data.js';
 export const SAVE_KEY = 'atelier-preuves-v1';
 
 export function defaultSave() {
-  return { v: 1, proven: [], notation: 'simple', seenIntro: [] };
+  return { v: 1, proven: [], notation: 'simple', seenIntro: [], seenTuto: false };
 }
 
 export function loadSave(storage) {
@@ -18,6 +18,7 @@ export function loadSave(storage) {
       proven: Array.isArray(d.proven) ? THEOREMS.map((t) => t.id).filter((id) => d.proven.includes(id) && ids.has(id)) : [],
       notation: d.notation === 'principia' ? 'principia' : 'simple',
       seenIntro: Array.isArray(d.seenIntro) ? d.seenIntro.filter((n) => [1, 2, 3].includes(n)) : [],
+      seenTuto: d.seenTuto === true,
     };
   } catch {
     return defaultSave();

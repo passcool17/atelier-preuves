@@ -35,3 +35,14 @@ test('jardin complet : plus de théorème suivant', () => {
   const all = ['*2.07', '*2.02', '*2.01', '*2.03', '*2.06', '*2.3', '*2.8', '*2.08', '*2.2', '*2.36', '*2.32', '*2.31'];
   assert.equal(nextTheorem({ proven: all }), null);
 });
+
+test('ancienne sauvegarde (sans tutoriel) : tout est gardé, le tutoriel s’affichera une fois', () => {
+  const st = mem();
+  st.setItem(SAVE_KEY, JSON.stringify({ v: 1, proven: ['*2.07', '*2.02'], notation: 'simple', seenIntro: [1] }));
+  const s = loadSave(st);
+  assert.deepEqual(s.proven, ['*2.07', '*2.02']);
+  assert.deepEqual(s.seenIntro, [1]);
+  assert.equal(s.seenTuto, false);
+  writeSave(st, { ...s, seenTuto: true });
+  assert.equal(loadSave(st).seenTuto, true);
+});

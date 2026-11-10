@@ -9,7 +9,7 @@ Jeu web pour Camille (13 ans) : deviens le **Logic Theorist** (Newell, Shaw et S
 - Axiomes et théorèmes : *Principia Mathematica*, Whitehead et Russell (domaine public).
 
 ```sh
-npm test        # tests node (moteur, 12 preuves, notation, sauvegarde)
+npm test        # tests node (moteur, 12 preuves, explications, notation, sauvegarde)
 npm run serve   # http://localhost:8893
 ```
 
