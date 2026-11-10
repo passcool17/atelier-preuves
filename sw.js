@@ -1,16 +1,17 @@
 /* Service worker versionné — change CACHE pour invalider l’ancien cache. */
-const CACHE = 'atelier-v1';
+const CACHE = 'atelier-v2';
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=atelier-v1',
-  './js/main.js?v=atelier-v1',
+  './style.css?v=atelier-v2',
+  './js/main.js?v=atelier-v2',
   './js/logic.js',
   './js/methods.js',
   './js/data.js',
   './js/game.js',
   './js/save.js',
   './js/garden.js',
+  './js/explain.js',
   './icon.svg',
   './icon-192.png',
   './icon-512.png',

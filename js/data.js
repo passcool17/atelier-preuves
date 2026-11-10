@@ -15,28 +15,16 @@ export const LEVELS = [
     n: 1,
     titre: 'La substitution',
     methods: ['sub'],
-    intro: [
-      'Un outil est une formule déjà vraie. Si tu remplaces une lettre partout par une autre formule, l’outil reste vrai : c’est la substitution.',
-      'Petit secret des Principia : « A → B » veut dire exactement « non A ou B ».',
-    ],
   },
   {
     n: 2,
     titre: 'Le détachement',
     methods: ['sub', 'det'],
-    intro: [
-      'Si un outil dit « A → ton but », il suffit de prouver A. Tu choisis l’outil, la machine écrit le nouveau but.',
-      'Tu termines toujours par une substitution.',
-    ],
   },
   {
     n: 3,
     titre: 'Le chaînage',
     methods: ['sub', 'avant', 'arriere', 'det'],
-    intro: [
-      'Pour aller de a jusqu’à c, on passe par une étape b au milieu.',
-      'Chaînage avant : un outil part de a. Chaînage arrière : un outil arrive à c.',
-    ],
   },
 ];
 
