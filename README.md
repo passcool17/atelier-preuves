@@ -13,7 +13,7 @@ npm test        # tests node (moteur, 15 preuves, défi, explications, sauvegard
 npm run serve   # http://localhost:8893
 ```
 
-Publication : GitHub Pages par GitHub Actions (`.github/workflows/pages.yml`) à chaque push sur `main`, après les tests. Pour forcer une mise à jour des téléphones, change la version au même endroit dans `js/version.js`, `CACHE` de `sw.js` et les `?v=` de `index.html` (un test vérifie qu’elles sont égales). Version actuelle : `atelier-v4`.
+Publication : GitHub Pages par GitHub Actions (`.github/workflows/pages.yml`) à chaque push sur `main`, après les tests. Pour forcer une mise à jour des téléphones, change la version au même endroit dans `js/version.js`, `CACHE` de `sw.js` et les `?v=` de `index.html` (un test vérifie qu’elles sont égales). Version actuelle : `atelier-v5`.
 
 - Illustrations (jardin, plantes en 3 stades, intros, icônes) : bot Atelier assets, originales pour ce jeu (voir GAME.md, « Illustrations »).
 - Musique : MusicGen (`facebook/musicgen-small`, poids CC BY-NC 4.0), voir GAME.md, « Ressources et licences ».

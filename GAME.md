@@ -77,6 +77,7 @@ Livrées par le bot **Atelier assets · 2D & 3D** le 16 nov. 2026 (direction app
 - Pas de chrono.
 
 - Version 4 (`atelier-v4`) : illustrations d’Atelier assets branchées (jardin, 3 stades par plante, coin bonus, intros, icônes), accueil retravaillé autour du jardin.
+- Version 5 (`atelier-v5`) : correctifs QA. Toutes les cibles tactiles font au moins 44 × 44 px (son, aide, « Voir les Principia », Rejouer / Défi, jetons, replis, curseurs). Chaque changement d’écran repart en haut (défilement instantané) et met le focus sur le titre du nouvel écran (`js/nav.js`).
 
 ## Prochaines idées
 - Petites animations image par image des plantes (balancement, floraison) si Atelier assets les fait.

@@ -9,7 +9,7 @@ const sw = read('sw.js');
 const assets = [...sw.matchAll(/^\s*'(\.\/[^']*)',?$/gm)].map((m) => m[1]);
 
 test('une seule version partout : sw.js, index.html (?v=), js/version.js', () => {
-  assert.equal(VERSION, 'atelier-v4');
+  assert.equal(VERSION, 'atelier-v5');
   assert.match(sw, new RegExp(`const CACHE = '${VERSION}';`));
   const html = read('index.html');
   const vs = [...html.matchAll(/\?v=([\w-]+)/g)].map((m) => m[1]);

@@ -1,12 +1,12 @@
 /* Service worker versionné — change CACHE pour invalider l’ancien cache. */
-const CACHE = 'atelier-v4'; // garder égal à js/version.js et aux ?v= de index.html
+const CACHE = 'atelier-v5'; // garder égal à js/version.js et aux ?v= de index.html
 
 // Indispensable au premier affichage : mis en cache à l’installation.
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=atelier-v4',
-  './js/main.js?v=atelier-v4',
+  './style.css?v=atelier-v5',
+  './js/main.js?v=atelier-v5',
   './js/logic.js',
   './js/methods.js',
   './js/data.js',
@@ -17,6 +17,7 @@ const ASSETS = [
   './js/audio.js',
   './js/art.js',
   './js/icons.js',
+  './js/nav.js',
   './js/version.js',
   './assets/art/garden/fond.webp',
   './icon.svg',

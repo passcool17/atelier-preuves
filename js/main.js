@@ -6,6 +6,7 @@ import { TUTORIAL, GUIDES, EXPLAIN, GLOSSARY, FLECHE, MACHINE_WHY, explainStep }
 import { newProof, playStep, resetProof, currentGoal, substOptions, toolsFor, machine, hint, levelOf, challengeScore, compareTries } from './game.js';
 import { loadSave, writeSave, nextTheorem, nextBonus, bonusUnlocked, recordBest, setAudio } from './save.js';
 import { plantSvg, plantGrow, gardenSvg, bonusGardenSvg, introArt } from './garden.js';
+import { enterScreen } from './nav.js';
 import { ICONS } from './icons.js';
 import { createAudio } from './audio.js';
 import { VERSION } from './version.js';
@@ -68,8 +69,11 @@ function render() {
   const steps = ui.screen === 'proof' && ui.proof ? ui.proof.steps.length : 0;
   const stepUp = !enter && steps > shownSteps;
   app.innerHTML = header() + `<main class="screen screen-${ui.screen}${enter ? ' enter' : ''}${stepUp ? ' step-up' : ''}">${fn()}</main>`;
+  const first = shown === null;
   shown = ui.screen;
   shownSteps = steps;
+  if (enter && !first && !ui.focus) enterScreen(app.querySelector('main'), window);
+  else if (enter) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   if (ui.focus) {
     const f = app.querySelector(ui.focus);
     if (f) f.focus({ preventScroll: true });
@@ -275,7 +279,7 @@ function proof() {
   return `<div class="progress"><span>${MODE_LABEL[ui.mode] ? `${MODE_LABEL[ui.mode]} · ` : ''}${lv.bonus ? 'Bonus' : `Niveau ${t.niveau}`} · ${esc(lv.titre)}</span><span>${idx} / ${inLevel.length}</span></div>
     ${defi}
     <section class="card goal">
-      <p class="kicker">À prouver — ${esc(thmLabel(t))}</p>
+      <p class="kicker" data-heading>À prouver — ${esc(thmLabel(t))}</p>
       <p class="formula big">${F(t.f)}</p>
       ${fold('fr', 'En français, ça veut dire…', exampleHtml(t.id), true)}
       ${EXPLAIN[t.id].fleche ? fold(`fl-${t.id}`, '🔑 Bon à savoir : ' + esc(FLECHE.titre), flecheHtml(), t.id === '*2.02', 'fleche') : ''}
@@ -413,14 +417,12 @@ function onAction(el) {
     case 'bonus':
       ui.flow = 'bonus';
       startNext();
-      window.scrollTo(0, 0);
       break;
     case 'replay':
     case 'defi': {
       const t = byId(el.dataset.id);
       if (!t || !save.proven.includes(t.id)) return;
       startProof(t, a);
-      window.scrollTo(0, 0);
       break;
     }
     case 'sound':
@@ -437,7 +439,6 @@ function onAction(el) {
     case 'help':
       if (ui.screen !== 'help' && ui.screen !== 'intro' && ui.screen !== 'tuto') ui.back = ui.screen;
       ui.screen = 'help';
-      window.scrollTo(0, 0);
       break;
     case 'help-close':
       ui.screen = ui.back === 'proof' && !ui.proof ? 'home' : ui.back;
@@ -461,7 +462,6 @@ function onAction(el) {
       persist();
       if (ui.tutoThen === 'start') resumePending();
       else ui.screen = 'help';
-      window.scrollTo(0, 0);
       break;
     case 'guide':
       ui.level = Number(el.dataset.level);
@@ -545,8 +545,7 @@ function onAction(el) {
         ui.last = { thm, steps: pr.steps, goals: pr.goals, mach, did: nb(did), mode: ui.mode, score, cmp: compareTries(score, mach.tries), isBest };
         ui.msg = null;
         ui.screen = 'success';
-        window.scrollTo(0, 0);
-      } else {
+        } else {
         ui.msg = `Bien joué ! ${r.msg}`;
         ui.fx = 'ok';
         audio.play('step');
@@ -557,7 +556,6 @@ function onAction(el) {
     }
     case 'next':
       startNext();
-      window.scrollTo(0, 0);
       break;
     case 'reset-all':
       if (!ui.resetArmed) {

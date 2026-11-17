@@ -269,3 +269,18 @@ html, body { background: linear-gradient(180deg, #e6ece6 0, var(--sand) 260px); 
   .grow3 .st-seed, .grow3 .st-sprout { opacity: 0 !important; }
   .grow3 .st-bloom { opacity: 1 !important; transform: none !important; }
 }
+
+/* atelier-v5 : toutes les cibles tactiles font au moins 44 × 44 px (QA v4). */
+.iconbtn, .helpbtn { width: 44px; height: 44px; }
+.iconbtn { padding: 11px; }
+.toggle { min-height: 44px; padding: 10px 14px; }
+.chip { min-height: 44px; }
+.btn.small, .lg-b .btn.small { min-height: 44px; min-width: 44px; }
+.lg-b .btn.small { padding: 10px 12px; }
+[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
+.fold > summary { min-height: 44px; display: flex; align-items: center; gap: 6px; padding: 10px 12px; box-sizing: border-box; }
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary::before { content: '▸'; transition: transform .15s; }
+.fold[open] > summary::before { transform: rotate(90deg); }
+.chip { min-width: 44px; }
+.sound-panel input[type="range"] { min-height: 44px; }
