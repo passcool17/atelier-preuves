@@ -26,6 +26,12 @@ export const LEVELS = [
     titre: 'Le chaînage',
     methods: ['sub', 'avant', 'arriere', 'det'],
   },
+  {
+    n: 4,
+    titre: 'La double négation',
+    methods: ['sub', 'det', 'avant', 'arriere'],
+    bonus: true,
+  },
 ];
 
 // 12 théorèmes *2, du plus simple au plus difficile. Chacun fait pousser une plante.
@@ -42,6 +48,20 @@ export const THEOREMS = [
   { id: '*2.36', niveau: 3, nom: 'Le détour', src: '(q → r) → ((p ou q) → (r ou p))', plante: 'pin' },
   { id: '*2.32', niveau: 3, nom: 'Regrouper à droite', src: '((p ou q) ou r) → (p ou (q ou r))', plante: 'cerisier' },
   { id: '*2.31', niveau: 3, nom: 'Regrouper à gauche', src: '(p ou (q ou r)) → ((p ou q) ou r)', plante: 'bonsai' },
+  // Niveau 4 facultatif (Principia vol. I, 1910, p. 105-106) : la double négation.
+  { id: '*2.11', niveau: 4, nom: 'Le tiers exclu', src: 'p ou non p', plante: 'tsukubai' },
+  { id: '*2.12', niveau: 4, nom: 'Double non, aller', src: 'p → non non p', plante: 'pont' },
+  { id: '*2.14', niveau: 4, nom: 'Double non, retour', src: 'non non p → p', plante: 'koi' },
 ].map((t) => ({ ...t, f: parse(t.src) }));
 
-export const byId = (id) => AXIOMS.find((a) => a.id === id) || THEOREMS.find((t) => t.id === id);
+/** Les 12 théorèmes du jardin (niveaux 1 à 3). */
+export const CORE = THEOREMS.filter((t) => t.niveau <= 3);
+
+/**
+ * Outil prêté au niveau 4. *2.13 (Principia p. 106) sert à prouver *2.14.
+ * Les Principia le prouvent en combinant deux résultats d’un coup ; les 4 méthodes du jeu ne le peuvent pas
+ * (vérifié dans tests/level4.test.js), alors on le prête sans le faire prouver.
+ */
+export const LEMMAS = [{ id: '*2.13', niveau: 4, nom: 'Le coup de pouce', src: 'p ou non non non p', pret: true }].map((t) => ({ ...t, f: parse(t.src) }));
+
+export const byId = (id) => AXIOMS.find((a) => a.id === id) || THEOREMS.find((t) => t.id === id) || LEMMAS.find((t) => t.id === id);

@@ -1,14 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { THEOREMS, AXIOMS, LEVELS } from '../js/data.js';
+import { THEOREMS, AXIOMS, LEVELS, CORE } from '../js/data.js';
 import { newProof, playStep, machine, substOptions, currentGoal, toolsFor } from '../js/game.js';
 import { equiv, parse, show } from '../js/logic.js';
 
-test('12 théorèmes, 3 niveaux de 4, 5 axiomes', () => {
-  assert.equal(THEOREMS.length, 12);
+test('12 théorèmes du jardin (3 niveaux de 4), 3 bonus au niveau 4, 5 axiomes', () => {
+  assert.equal(CORE.length, 12);
   for (const n of [1, 2, 3]) assert.equal(THEOREMS.filter((t) => t.niveau === n).length, 4);
+  assert.deepEqual(THEOREMS.filter((t) => t.niveau === 4).map((t) => t.id), ['*2.11', '*2.12', '*2.14']);
+  assert.equal(THEOREMS.length, 15);
+  assert.deepEqual(THEOREMS.slice(0, 12), CORE, 'le bonus vient après le jardin');
   assert.equal(AXIOMS.length, 5);
-  assert.equal(new Set(THEOREMS.map((t) => t.plante)).size, 12);
+  assert.equal(new Set(THEOREMS.map((t) => t.plante)).size, 15);
 });
 
 test('formules identiques aux Principia (notation ⊃ ∨ ~)', () => {
@@ -18,6 +21,8 @@ test('formules identiques aux Principia (notation ⊃ ∨ ~)', () => {
     '*2.8': '(q ∨ r) ⊃ ((~r ∨ s) ⊃ (q ∨ s))', '*2.08': 'p ⊃ p', '*2.2': 'p ⊃ (p ∨ q)',
     '*2.36': '(q ⊃ r) ⊃ ((p ∨ q) ⊃ (r ∨ p))', '*2.32': '((p ∨ q) ∨ r) ⊃ (p ∨ (q ∨ r))',
     '*2.31': '(p ∨ (q ∨ r)) ⊃ ((p ∨ q) ∨ r)',
+    // Niveau 4 : Principia vol. I (1910), p. 105-106. Le livre écrit ~(~p) ; le jeu écrit ~~p.
+    '*2.11': 'p ∨ ~p', '*2.12': 'p ⊃ ~~p', '*2.14': '~~p ⊃ p',
   };
   for (const t of THEOREMS) assert.equal(show(t.f, 'principia'), pm[t.id], t.id);
 });
@@ -50,7 +55,7 @@ for (const [i, t] of THEOREMS.entries()) {
     }
     assert.ok(proof.done);
     // Outils utilisés : axiomes ou théorèmes déjà prouvés seulement.
-    const allowed = toolsFor(proven).map((x) => x.id);
+    const allowed = toolsFor(proven, t).map((x) => x.id);
     for (const st of res.path) assert.ok(allowed.includes(st.toolId));
   });
 }

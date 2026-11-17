@@ -1,5 +1,6 @@
 // Jardin zen dessiné en SVG. Chaque plante tient dans une boîte de 100 × 100 (base au centre en bas).
-import { THEOREMS } from './data.js';
+import { THEOREMS, CORE } from './data.js';
+import { artUrl } from './art.js';
 
 const C = {
   sand: '#ebe2cc', rake: '#d8ccb0', moss: '#7f9c6c', mossD: '#5f7d55', stone: '#a29d92', stoneD: '#7e796f',
@@ -59,10 +60,36 @@ const PLANTS = {
     <path d="M50 86 q-14-12 0-24 q12-8 -2-20" stroke="${C.bark}" stroke-width="6" fill="none" stroke-linecap="round"/>
     <ellipse cx="34" cy="56" rx="16" ry="8" fill="${C.moss}"/><ellipse cx="62" cy="48" rx="16" ry="8" fill="${C.mossD}"/>
     <ellipse cx="48" cy="36" rx="14" ry="8" fill="${C.moss}"/>`,
+  // Niveau 4 (placeholders) : bassin de pierre, petit pont, carpe koï.
+  tsukubai: () => `
+    <ellipse cx="50" cy="88" rx="30" ry="9" fill="${C.stoneD}"/><path d="M24 86 q0-26 26-28 q26 2 26 28z" fill="${C.stone}"/>
+    <ellipse cx="50" cy="62" rx="18" ry="5" fill="${C.water}"/><path d="M70 46 h18 M72 46 v-8" stroke="${C.bark}" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="44" cy="62" r="2" fill="#fff" opacity=".7"/>`,
+  pont: () => `
+    <ellipse cx="50" cy="90" rx="44" ry="8" fill="${C.water}"/>
+    <path d="M10 82 q40-40 80 0" stroke="#b5533c" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M22 70 v14 M50 56 v22 M78 70 v14" stroke="#b5533c" stroke-width="4"/><path d="M14 66 q36-32 72 0" stroke="#c96a50" stroke-width="3" fill="none"/>`,
+  koi: () => `
+    <ellipse cx="50" cy="80" rx="42" ry="16" fill="${C.water}"/>
+    <path d="M28 78 q18-16 40-4 q-20 12 -40 4z" fill="#e9874f"/><path d="M68 74 l12-8 v18z" fill="#e9874f"/>
+    <circle cx="36" cy="76" r="2" fill="${C.ink}"/><path d="M46 72 q6 4 10 0" stroke="#fff" stroke-width="3" fill="none"/>
+    <ellipse cx="30" cy="92" rx="8" ry="3" fill="${C.moss}"/>`,
 };
 
+/** Une plante : l’illustration livrée si elle existe (voir art.js), sinon le dessin SVG. */
 export function plantSvg(name, cls = '') {
-  return `<svg class="plant ${cls}" viewBox="0 0 100 100" role="img" aria-label="${name}">${PLANTS[name]()}</svg>`;
+  const url = artUrl('plants', name);
+  if (url) return `<img class="plant ${cls}" src="${url}" alt="" width="200" height="200" decoding="async">`;
+  return `<svg class="plant ${cls}" viewBox="0 0 100 100" aria-hidden="true">${PLANTS[name]()}</svg>`;
+}
+
+/** Placeholder d’illustration d’intro de niveau (remplacé par assets/art/intros/niveau-N.webp). */
+export function introArt(n) {
+  const url = artUrl('intros', `niveau-${n}`);
+  if (url) return `<img class="intro-art" src="${url}" alt="" width="800" height="400" decoding="async">`;
+  const pl = { 1: 'galets', 2: 'lotus', 3: 'cerisier', 4: 'koi' }[n];
+  return `<svg class="intro-art" viewBox="0 0 400 140" aria-hidden="true"><rect width="400" height="140" rx="16" fill="${C.sand}"/>${rake(140)}
+    <g class="intro-plant" style="transform-origin:200px 128px"><g transform="translate(140 18) scale(1.2)">${PLANTS[pl]()}</g></g></svg>`;
 }
 
 // Centres des 12 emplacements dans le jardin (viewBox 400 × 320), en quinconce.
@@ -72,23 +99,36 @@ const SPOTS = [
   [45, 260], [145, 255], [245, 262], [340, 262],
 ];
 
-const rake = () => {
+const rake = (h = 320) => {
   let s = '';
-  for (let y = 14; y < 320; y += 11) s += `<path d="M0 ${y} Q100 ${y - 5} 200 ${y} T400 ${y}" stroke="${C.rake}" stroke-width="1.6" fill="none"/>`;
+  for (let y = 14; y < h; y += 11) s += `<path d="M0 ${y} Q100 ${y - 5} 200 ${y} T400 ${y}" stroke="${C.rake}" stroke-width="1.6" fill="none"/>`;
   return s;
 };
 
-/** Le jardin : une plante par théorème prouvé, des cercles ratissés pour les autres. */
-export function gardenSvg(proven, { highlight = null } = {}) {
-  const items = THEOREMS.map((t, i) => {
-    const [x, y] = SPOTS[i];
-    const ring = `<ellipse cx="${x}" cy="${y + 14}" rx="36" ry="20" fill="${C.sand}" stroke="${C.rake}" stroke-width="1.6"/><ellipse cx="${x}" cy="${y + 14}" rx="25" ry="13" fill="none" stroke="${C.rake}" stroke-width="1.6"/>`;
-    if (!proven.includes(t.id)) return ring;
-    const cls = t.id === highlight ? 'grow' : '';
-    return `${ring}<g class="${cls}" style="transform-origin:${x}px ${y + 14}px"><g transform="translate(${x - 40} ${y - 62}) scale(0.8)">${PLANTS[t.plante]()}</g></g>`;
-  }).join('');
-  return `<svg class="garden" viewBox="0 0 400 320" role="img" aria-label="Jardin zen : ${proven.length} plantes sur 12">
-    <rect width="400" height="320" rx="18" fill="${C.sand}"/>${rake()}${items}</svg>`;
+function spot(t, x, y, proven, highlight, replay) {
+  const ring = `<ellipse cx="${x}" cy="${y + 14}" rx="36" ry="20" fill="${C.sand}" stroke="${C.rake}" stroke-width="1.6"/><ellipse cx="${x}" cy="${y + 14}" rx="25" ry="13" fill="none" stroke="${C.rake}" stroke-width="1.6"/>`;
+  if (!proven.includes(t.id)) return ring;
+  const cls = `pl${t.id === highlight ? ' grow' : ''}`;
+  const btn = replay ? ` data-action="replay" data-id="${t.id}" role="button" tabindex="0" aria-label="Rejouer « ${t.nom} »"` : '';
+  return `${ring}<g class="${cls}"${btn} style="transform-origin:${x}px ${y + 14}px"><ellipse cx="${x}" cy="${y + 4}" rx="40" ry="40" fill="transparent"/><g transform="translate(${x - 40} ${y - 62}) scale(0.8)">${PLANTS[t.plante]()}</g></g>`;
+}
+
+/** Le jardin : une plante par théorème prouvé, des cercles ratissés pour les autres. replay : plantes touchables. */
+export function gardenSvg(proven, { highlight = null, replay = false } = {}) {
+  const items = CORE.map((t, i) => spot(t, ...SPOTS[i], proven, highlight, replay)).join('');
+  const n = CORE.filter((t) => proven.includes(t.id)).length;
+  const bg = artUrl('garden', 'fond');
+  return `<svg class="garden${replay ? ' touch' : ''}" viewBox="0 0 400 320" role="group" aria-label="Jardin zen : ${n} plantes sur 12">
+    ${bg ? `<image href="${bg}" width="400" height="320"/>` : `<rect width="400" height="320" rx="18" fill="${C.sand}"/>${rake()}`}${items}</svg>`;
+}
+
+/** Le coin bonus (niveau 4) : 3 emplacements au bord de l’eau. */
+export function bonusGardenSvg(proven, { highlight = null, replay = false } = {}) {
+  const L4 = THEOREMS.filter((t) => t.niveau === 4);
+  const items = L4.map((t, i) => spot(t, 80 + i * 120, 66, proven, highlight, replay)).join('');
+  const n = L4.filter((t) => proven.includes(t.id)).length;
+  return `<svg class="garden bonus${replay ? ' touch' : ''}" viewBox="0 0 400 120" role="group" aria-label="Coin bonus : ${n} plante${n > 1 ? 's' : ''} sur 3">
+    <rect width="400" height="120" rx="18" fill="${C.sand}"/>${rake(120)}<path d="M0 104 q100 -14 200 0 t200 0 v16 h-400z" fill="${C.water}" opacity=".7"/>${items}</svg>`;
 }
 
 export function iconSvg() {

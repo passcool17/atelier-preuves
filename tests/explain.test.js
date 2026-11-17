@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { THEOREMS, AXIOMS, LEVELS, byId } from '../js/data.js';
+import { THEOREMS, AXIOMS, LEVELS, LEMMAS, byId } from '../js/data.js';
 import { TUTORIAL, GUIDES, EXPLAIN, GLOSSARY, FLECHE, MACHINE_WHY, explainStep, usedDefinition } from '../js/explain.js';
 import { machine, newProof, playStep, currentGoal } from '../js/game.js';
 import { parse, show, vars, equiv, norm } from '../js/logic.js';
@@ -57,7 +57,7 @@ test('mini-exemples des guides : les pas sont justes', () => {
   assert.equal(show(r.subgoal), GUIDES[2].pas[3].f);
 });
 
-for (const x of [...AXIOMS, ...THEOREMS]) {
+for (const x of [...AXIOMS, ...THEOREMS, ...LEMMAS]) {
   test(`${x.id} : phrase en français et exemple concret`, () => {
     const e = EXPLAIN[x.id];
     assert.ok(e, `${x.id} sans explication`);

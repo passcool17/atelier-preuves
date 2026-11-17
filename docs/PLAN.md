@@ -8,3 +8,8 @@ Approuvé par Pascal (via APP, 9 nov. 2026) : contenu court (12 théorèmes), d�
 4. **Jardin** (`js/garden.js`) : 12 plantes en SVG, jardin complet avec pluie de pétales.
 5. **PWA** : manifest, icônes, service worker versionné ; sauvegarde localStorage.
 6. **Tests node** : moteur, 12 preuves, notation, sauvegarde. QA Chrome headless 412×915 sur l’URL publique.
+
+## Version 3 (approuvée par Pascal, relayée par Chef de cabinet, 16 nov. 2026)
+- **B. Son et ambiance** : musique zen MusicGen en boucle, effets WebAudio, réglages gardés, petites animations, `prefers-reduced-motion`.
+- **C. Contenu** : rejouer depuis le jardin, défi contre la machine (essais), niveau 4 bonus *2.11, *2.12, *2.14 (+ *2.13 prêté).
+- **A. Illustrations** (plus tard, Atelier assets) : crochets prêts dans `js/art.js`, fichiers attendus dans GAME.md.

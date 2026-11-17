@@ -74,6 +74,16 @@ export const GUIDES = {
       { t: 'Chaînage arrière : même idée, mais tu poses d’abord le dernier domino, et il reste à relier le début.' },
     ],
   },
+  4: {
+    analogie: 'Un « non », c’est comme faire demi-tour. Deux demi-tours, et tu regardes dans la même direction qu’au départ. « Non non p », c’est donc p. Ce niveau bonus le prouve avec les règles du livre.',
+    pas: [
+      { t: 'Ton but :', f: 'p → non non p' },
+      { t: 'L’outil « Le tiers exclu » (tu vas le prouver d’abord) :', f: 'p ou non p' },
+      { t: 'Remplace p par « non p », partout :', f: 'non p ou non non p' },
+      { t: 'Avec le secret de la flèche, « non p ou … » se lit « p → … ». C’est exactement le but ! ✓' },
+    ],
+    fleche: true,
+  },
 };
 
 /**
@@ -97,6 +107,10 @@ export const EXPLAIN = {
   '*2.2': { fr: 'Si p est vrai, alors « p ou q » est vrai.', lettres: { p: 'il pleut', q: 'il neige' }, ex: 'S’il pleut, alors c’est vrai qu’il pleut ou qu’il neige.' },
   '*2.36': { fr: 'Si q mène à r, alors « p ou q » mène à « r ou p ».', lettres: { p: 'il neige', q: 'il pleut', r: 'le sol est mouillé' }, ex: 'Si « il pleut → le sol est mouillé », alors « il neige ou il pleut » mène à « le sol est mouillé ou il neige ».', fleche: true },
   '*2.32': { fr: 'On peut déplacer les parenthèses d’un « ou » : regrouper à droite au lieu de à gauche.', lettres: { p: 'je mange une pomme', q: 'je mange une poire', r: 'je mange une banane' }, ex: 'Si je mange (une pomme ou une poire) ou une banane, alors je mange une pomme ou (une poire ou une banane).' },
+  '*2.11': { fr: 'Le tiers exclu : p est vrai, ou bien « non p » est vrai. Il n’y a pas de troisième choix.', lettres: { p: 'il pleut' }, ex: 'Il pleut, ou il ne pleut pas. Peu importe la météo, cette phrase est toujours vraie.' },
+  '*2.12': { fr: 'Si p est vrai, alors « non non p » est vrai : dire non deux fois, ça revient à dire oui.', lettres: { p: 'il pleut' }, ex: 'S’il pleut, alors ce n’est pas vrai qu’il ne pleut pas.', fleche: true },
+  '*2.13': { fr: 'Trois « non » valent un seul « non ». Donc c’est le tiers exclu déguisé : « p ou non p ». Les Principia le prouvent ; ici, on te le prête.', lettres: { p: 'il pleut' }, ex: 'Il pleut, ou ce n’est pas vrai que ce n’est pas vrai qu’il ne pleut pas (donc : il ne pleut pas).' },
+  '*2.14': { fr: 'Le retour : si « non non p » est vrai, alors p est vrai. Deux demi-tours te ramènent au départ.', lettres: { p: 'il pleut' }, ex: 'S’il n’est pas vrai qu’il ne pleut pas, alors il pleut.', fleche: true },
   '*2.31': { fr: 'L’inverse : on peut regrouper à gauche au lieu de à droite.', lettres: { p: 'je mange une pomme', q: 'je mange une poire', r: 'je mange une banane' }, ex: 'Si je mange une pomme ou (une poire ou une banane), alors je mange (une pomme ou une poire) ou une banane.' },
 };
 
@@ -116,6 +130,10 @@ export const GLOSSARY = [
   ['Chaînage', 'Relier a → c en passant par un milieu b, comme des dominos.'],
   ['Heuristique', 'Un « truc » pour bien deviner quoi essayer en premier, au lieu de tout essayer.'],
   ['Principia', 'Principia Mathematica, livre de Whitehead et Russell (1910).'],
+  ['Tiers exclu', '« p ou non p » : une phrase est vraie ou fausse, pas de troisième choix.'],
+  ['Double négation', '« non non p » veut dire p, comme deux demi-tours.'],
+  ['Essai', 'Une vérification : une méthode avec un outil. Toi, chaque « Essayer » compte (et chaque indice en défi).'],
+  ['Défi', 'Rejouer une preuve en faisant moins d’essais que la machine.'],
 ];
 
 /** Pourquoi la machine fait tant d'essais. */
