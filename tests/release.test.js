@@ -9,7 +9,7 @@ const sw = read('sw.js');
 const assets = [...sw.matchAll(/^\s*'(\.\/[^']*)',?$/gm)].map((m) => m[1]);
 
 test('une seule version partout : sw.js, index.html (?v=), js/version.js', () => {
-  assert.equal(VERSION, 'atelier-v3');
+  assert.equal(VERSION, 'atelier-v4');
   assert.match(sw, new RegExp(`const CACHE = '${VERSION}';`));
   const html = read('index.html');
   const vs = [...html.matchAll(/\?v=([\w-]+)/g)].map((m) => m[1]);
@@ -21,6 +21,13 @@ test('une seule version partout : sw.js, index.html (?v=), js/version.js', () =>
 test('le service worker précharge tous les modules JS et les fichiers son', () => {
   for (const f of readdirSync(new URL('js/', root))) assert.ok(assets.includes(`./js/${f}`) || assets.includes(`./js/${f}?v=${VERSION}`), f);
   for (const f of readdirSync(new URL('assets/audio/', root))) assert.ok(assets.includes(`./assets/audio/${f}`), f);
+});
+
+test('hors ligne après une visite : chaque illustration est mise en cache par le service worker', async () => {
+  const { allArtFiles } = await import('../js/art.js');
+  for (const f of allArtFiles()) assert.ok(assets.includes(f), f);
+  const m = JSON.parse(read('manifest.webmanifest'));
+  assert.ok(m.icons.some((i) => i.purpose === 'maskable' && i.src === './icon-512-maskable.png'));
 });
 
 test('chaque fichier préchargé existe', () => {

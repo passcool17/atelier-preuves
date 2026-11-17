@@ -1,6 +1,6 @@
 :root {
-  --sand: #f4efe3; --sand2: #ebe2cc; --moss: #7f9c6c; --mossD: #5f7d55; --stone: #a29d92;
-  --sky: #dfe9ef; --ink: #34403b; --soft: #5a635d; --pink: #e8b7bd; --card: #fffdf8;
+  --sand: #f6efdc; --sand2: #ece2c8; --moss: #6b8f71; --mossD: #4f7458; --stone: #a29d92;
+  --sky: #e3e9e6; --ink: #34403b; --soft: #5a635d; --pink: #e8b7bd; --card: #fffdf8;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: var(--ink);
 }
@@ -214,4 +214,58 @@ button { font-family: inherit; }
   .feedback.fx-err, .feedback.fx-ok, .mbtn.on, .tool.on, .chip.on, .sound-panel, .pas.new { animation: none !important; }
   .btn:active:not(:disabled), .mbtn:active, .tool:active, .chip:active, .info:active, .iconbtn:active, .helpbtn:active { transform: none; }
   .motes { display: none; }
+}
+
+/* ——— atelier-v4 : illustrations d’Atelier assets ——— */
+html, body { background: linear-gradient(180deg, #e6ece6 0, var(--sand) 260px); }
+.top { background: rgba(236, 240, 232, .9); }
+.brand { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--mossD); }
+.brand span { color: var(--ink); font: 600 17px/1 Georgia, 'Times New Roman', serif; }
+.ic { width: 20px; height: 20px; flex: none; display: block; }
+.hero { margin-top: 6px; }
+.hero h1 { font-size: 30px; letter-spacing: -.01em; margin: 16px 0 6px; }
+.hero .lead { font-size: 16px; }
+.hero-art { box-shadow: 0 10px 30px rgba(60, 80, 60, .16); }
+.garden-wrap { border-radius: 20px; background: var(--sand2); }
+.garden { aspect-ratio: 400 / 320; }
+.garden.bonus { aspect-ratio: 400 / 120; }
+.count { text-align: left; margin: 4px 0 0; font-size: 14px; }
+.count-n { font-weight: 700; color: var(--mossD); font-variant-numeric: tabular-nums; }
+.garden.touch .pl.st-bloom { cursor: pointer; }
+.garden.touch .pl:focus-visible { outline: none; }
+.garden.touch .pl:focus-visible ellipse { stroke: var(--mossD); stroke-width: 3; opacity: 1; }
+.garden .pl.st-sprout image { animation: breathe 3.2s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes breathe { from { transform: scale(1); } to { transform: scale(1.06); } }
+.bonus-card .garden-wrap { margin: 8px 0 4px; box-shadow: none; }
+.mbtn { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--mossD); }
+.mbtn span { color: var(--ink); }
+.ibtn { display: inline-flex; align-items: center; gap: 6px; }
+.ibtn .ic { width: 18px; height: 18px; }
+.lg-b .ibtn { justify-content: center; }
+.legend .plant { width: 52px; height: 52px; }
+.legend li { padding: 8px 10px; border: 1px solid #e7dfca; }
+.plant-big { width: 168px; aspect-ratio: 1; }
+.plant-big .plant { width: 100%; height: 100%; }
+/* Pousse en 3 images : graine → germe → floraison. Hors entrée d’écran : floraison seule. */
+.grow3 { position: relative; width: 100%; aspect-ratio: 1; }
+.grow3 .st { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transform-origin: 50% 92%; }
+.grow3 .st-bloom { opacity: 1; }
+.enter .grow3 .st-seed { animation: st-seed 1s ease-out both; }
+.enter .grow3 .st-sprout { animation: st-sprout 1.4s ease-out .35s both; }
+.enter .grow3 .st-bloom { animation: st-bloom 1.2s cubic-bezier(.16, 1, .3, 1) 1.05s both; }
+@keyframes st-seed { 0% { opacity: 0; transform: translateY(-10px) scale(.9); } 25% { opacity: 1; transform: none; } 70% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes st-sprout { 0% { opacity: 0; transform: scale(.7, .5); } 35% { opacity: 1; transform: none; } 75% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes st-bloom { 0% { opacity: 0; transform: scale(.55, .45); } 40% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+.intro-art-wrap { margin: -16px -16px 12px; overflow: hidden; border-radius: 18px 18px 0 0; }
+.intro-art { aspect-ratio: 2 / 1; border-radius: 0; background: var(--sand2); }
+.enter .intro-art { animation: settle .9s cubic-bezier(.2, .7, .3, 1) both; }
+@keyframes settle { from { transform: scale(1.06); opacity: .4; } to { transform: none; opacity: 1; } }
+/* Paysage du téléphone : le jardin d’accueil tient dans l’écran. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .hero-art { max-width: calc((100vh - 120px) * 1.25); margin-inline: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .enter .grow3 .st, .garden .pl.st-sprout image, .enter .intro-art { animation: none !important; }
+  .grow3 .st-seed, .grow3 .st-sprout { opacity: 0 !important; }
+  .grow3 .st-bloom { opacity: 1 !important; transform: none !important; }
 }

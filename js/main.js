@@ -5,7 +5,8 @@ import { show, vars, key, norm, V, subst, parse } from './logic.js';
 import { TUTORIAL, GUIDES, EXPLAIN, GLOSSARY, FLECHE, MACHINE_WHY, explainStep } from './explain.js';
 import { newProof, playStep, resetProof, currentGoal, substOptions, toolsFor, machine, hint, levelOf, challengeScore, compareTries } from './game.js';
 import { loadSave, writeSave, nextTheorem, nextBonus, bonusUnlocked, recordBest, setAudio } from './save.js';
-import { plantSvg, gardenSvg, bonusGardenSvg, introArt } from './garden.js';
+import { plantSvg, plantGrow, gardenSvg, bonusGardenSvg, introArt } from './garden.js';
+import { ICONS } from './icons.js';
 import { createAudio } from './audio.js';
 import { VERSION } from './version.js';
 
@@ -33,8 +34,8 @@ const toolName = (t) => (P() ? t.id : t.nom);
 const thmLabel = (t) => (P() ? `${t.id} · ${t.nom}` : t.nom);
 const coreCount = () => CORE.filter((t) => save.proven.includes(t.id)).length;
 
-const ICON_SON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>';
-const ICON_MUET = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const ICON_SON = ICONS.son;
+const ICON_MUET = ICONS.sonOff;
 
 function soundPanel() {
   const a = save.audio;
@@ -51,7 +52,7 @@ function header() {
   const a = save.audio;
   const off = a.muted || (a.music === 0 && a.sfx === 0);
   return `<header class="top">
-    <button class="link" data-action="home" aria-label="Accueil">🪴 L’atelier</button>
+    <button class="link brand" data-action="home" aria-label="Accueil">${ICONS.jardin}<span>L’atelier</span></button>
     <span class="top-r"><button class="iconbtn${off ? ' off' : ''}" data-action="sound" aria-expanded="${ui.soundOpen}" aria-controls="sound-panel" aria-label="Son : ${off ? 'coupé' : 'activé'}. Réglages">${off ? ICON_MUET : ICON_SON}</button>
     <button class="helpbtn" data-action="help" aria-label="Comprendre : tutoriel et glossaire">?</button>
     <button class="toggle" data-action="notation" aria-pressed="${P()}">${P() ? 'Notation simple' : 'Voir les Principia'}</button></span>
@@ -141,11 +142,11 @@ function home() {
   const bonus = bonusUnlocked(save);
   const nb4 = nextBonus(save);
   return `<section class="hero">
+      <div class="garden-wrap hero-art">${gardenSvg(save.proven, { current: next ? next.id : null })}</div>
       <h1>L’atelier des preuves</h1>
       <p class="lead">En 1956, une machine, le Logic Theorist, a prouvé des théorèmes toute seule. Aujourd’hui, la machine, c’est toi.</p>
+      <p class="count"><span class="count-n">${n} / 12</span> plantes dans ton jardin${next ? ` · prochaine : « ${esc(next.nom)} »` : ''}</p>
     </section>
-    <div class="garden-wrap">${gardenSvg(save.proven)}</div>
-    <p class="count">${n} / 12 plantes dans ton jardin</p>
     <div class="actions">
       ${next ? `<button class="btn primary" data-action="start">${n ? 'Continuer' : 'Commencer'}</button>` : `<button class="btn primary" data-action="garden">Voir mon jardin</button>`}
       ${n && next ? '<button class="btn" data-action="garden">Mon jardin</button>' : ''}
@@ -156,6 +157,7 @@ function home() {
         <p class="kicker">Niveau bonus (facultatif)</p>
         <h2>La double négation</h2>
         <p>Trois théorèmes de plus des Principia : *2.11, *2.12 et *2.14. « Non non p », est-ce que c’est p ?</p>
+        <div class="garden-wrap bonus-wrap">${bonusGardenSvg(save.proven, { current: nb4 ? nb4.id : null })}</div>
         <div class="actions">${nb4 ? `<button class="btn primary" data-action="bonus">${save.proven.some((id) => byId(id).niveau === 4) ? 'Continuer le bonus' : 'Essayer le bonus'}</button>` : '<p class="small">Bonus terminé : 3 / 3. Bravo !</p>'}</div>
       </section>` : ''}`;
 }
@@ -281,7 +283,7 @@ function proof() {
     </section>
     <h3>1. Choisis une méthode</h3>
     <div class="methods">${methods
-      .map((m) => `<button class="mbtn${ui.method === m ? ' on' : ''}" data-action="method" data-method="${m}" aria-pressed="${ui.method === m}">${esc(METHODS[m].nom)}</button>`)
+      .map((m) => `<button class="mbtn${ui.method === m ? ' on' : ''}" data-action="method" data-method="${m}" aria-pressed="${ui.method === m}">${ICONS[m]}<span>${esc(METHODS[m].nom)}</span></button>`)
       .join('')}</div>
     ${ui.method ? `<p class="mdesc">${esc(METHODS[ui.method].court)}</p>` : ''}
     <h3>2. Choisis un outil</h3>
@@ -296,7 +298,7 @@ function proof() {
     ${subst3}
     <div class="feedback ${ui.msgKind}" role="status" aria-live="polite">${ui.msg ? esc(ui.msg) : ''}${ui.did && ui.msgKind === 'good' ? `<p class="did"><b>Ce que tu viens de faire :</b> ${ui.did}</p>` : ''}${ui.hintText ? `<p class="hint">💡 ${esc(ui.hintText)}</p>` : ''}</div>
     <div class="bar">
-      <button class="btn small" data-action="hint">Indice${pr.hint ? ` (${pr.hint}/3)` : ''}${ui.mode === 'defi' ? ' +1' : ''}</button>
+      <button class="btn small ibtn" data-action="hint">${ICONS.indice}Indice${pr.hint ? ` (${pr.hint}/3)` : ''}${ui.mode === 'defi' ? ' +1' : ''}</button>
       <button class="btn small" data-action="reset" ${pr.steps.length ? '' : 'disabled'}>Recommencer</button>
       <button class="btn primary" data-action="try" ${ready ? '' : 'disabled'}>Essayer</button>
     </div>`;
@@ -327,7 +329,7 @@ function success() {
   const again = mode === 'normal' ? '' : `<div class="actions"><button class="btn primary" data-action="${mode === 'defi' ? 'defi' : 'replay'}" data-id="${thm.id}">${mode === 'defi' ? 'Refaire le défi' : 'Rejouer encore'}</button><button class="btn" data-action="garden">Retour au jardin</button></div>`;
   if (mode === 'defi') {
     return `<section class="card win defi-win ${cmp.result}">
-      <div class="plant-big"><div class="sway">${plantSvg(thm.plante, 'grow')}</div><div class="motes" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
+      <div class="plant-big"><div class="sway">${plantGrow(thm.plante)}</div><div class="motes" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
       <p class="kicker">Défi · ${esc(thmLabel(thm))}</p>
       <h2 role="status">${esc(verdict)}</h2>
       ${versus(score, mach.tries)}
@@ -337,7 +339,7 @@ function success() {
     </section>${again}`;
   }
   return `<section class="card win">
-      <div class="plant-big"><div class="sway">${plantSvg(thm.plante, 'grow')}</div><div class="motes" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
+      <div class="plant-big"><div class="sway">${plantGrow(thm.plante)}</div><div class="motes" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
       <h2>${mode === 'replay' ? 'Preuve rejouée !' : 'Preuve trouvée !'}</h2>
       <p class="formula">${F(thm.f)}</p>
       <p>Ton chemin (${steps.length} étape${steps.length > 1 ? 's' : ''}) :</p><ol class="trail">${mine}</ol>
@@ -361,13 +363,13 @@ function garden() {
   const row = (t) => {
     const b = save.best[t.id];
     return `<li>${plantSvg(t.plante)}<span class="lg-t">${esc(thmLabel(t))}<br><span class="f">${F(t.f)}</span>${b ? `<br><span class="small">Record en défi : ${b} essai${b > 1 ? 's' : ''}</span>` : ''}</span>
-      <span class="lg-b"><button class="btn small" data-action="replay" data-id="${t.id}" aria-label="Rejouer « ${esc(t.nom)} »">Rejouer</button><button class="btn small defi-btn" data-action="defi" data-id="${t.id}" aria-label="Défi sur « ${esc(t.nom)} »">Défi</button></span></li>`;
+      <span class="lg-b"><button class="btn small" data-action="replay" data-id="${t.id}" aria-label="Rejouer « ${esc(t.nom)} »">Rejouer</button><button class="btn small defi-btn ibtn" data-action="defi" data-id="${t.id}" aria-label="Défi sur « ${esc(t.nom)} »">${ICONS.defi}Défi</button></span></li>`;
   };
   return `<section class="final ${done ? 'complete' : ''}">
       ${done ? '<div class="petals" aria-hidden="true">' + Array.from({ length: 14 }, (_, i) => `<i style="--i:${i}"></i>`).join('') + '</div>' : ''}
       <h2>${done ? 'Ton jardin est complet' : 'Ton jardin'}</h2>
-      <div class="garden-wrap">${gardenSvg(save.proven, { replay: true })}</div>
-      ${bonus ? `<div class="garden-wrap bonus-wrap">${bonusGardenSvg(save.proven, { replay: true })}</div>` : ''}
+      <div class="garden-wrap">${gardenSvg(save.proven, { replay: true, current: nextTheorem(save) ? nextTheorem(save).id : null })}</div>
+      ${bonus ? `<div class="garden-wrap bonus-wrap">${bonusGardenSvg(save.proven, { replay: true, current: nextBonus(save) ? nextBonus(save).id : null })}</div>` : ''}
       ${done ? '<p class="lead">Douze théorèmes des Principia, prouvés par toi, comme la machine de 1956. Respire, admire, bravo Camille.</p>' : `<p class="count">${coreCount()} / 12 plantes</p>`}
       ${save.proven.length ? '<p class="small center">Touche une plante (ou « Rejouer ») pour refaire sa preuve. « Défi » : fais moins d’essais que la machine.</p>' : ''}
       <ul class="legend">${THEOREMS.filter((t) => save.proven.includes(t.id)).map(row).join('')}</ul>
@@ -385,7 +387,8 @@ function credits() {
       <p><b>Principia Mathematica</b> : Alfred North Whitehead et Bertrand Russell (1910). Les axiomes *1 et les théorèmes *2 viennent de ce livre (domaine public).</p>
       <p><b>Inspiration</b> : le dépôt <a href="https://github.com/dmoews/logic-theorist" rel="noopener" target="_blank">dmoews/logic-theorist</a> sur GitHub, qui fait revivre le programme de 1956. Aucun code n’en a été repris : le moteur du jeu a été écrit de zéro en JavaScript.</p>
       <p><b>Musique</b> : boucle zen générée pour ce jeu avec MusicGen (modèle facebook/musicgen-small de Meta, poids sous licence CC BY-NC 4.0 : usage non commercial). Petits sons synthétisés en direct dans le navigateur.</p>
-      <p>Jeu fait pour Camille. Jardin dessiné en SVG. Version ${esc(VERSION)}.</p>
+      <p><b>Illustrations</b> : jardin, 15 plantes en 3 stades, intros de niveau, icônes et icône d’application créés pour ce jeu par le bot Atelier assets (images générées par IA, originales, aucune ressource de tiers).</p>
+      <p>Jeu fait pour Camille. Version ${esc(VERSION)}.</p>
       <button class="btn" data-action="home">Retour</button>
     </section>`;
 }

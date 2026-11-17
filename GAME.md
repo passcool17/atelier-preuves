@@ -45,23 +45,28 @@ Après chaque preuve, « Comment la machine l’a trouvée » : le moteur cherch
 - **Mouvement** : fondu entre écrans, nouvelle ligne du chemin + but qui s’illumine, petit « non » de côté sur une erreur, plante qui pousse en 3 temps (graine, pousse, plante) puis se balance, lucioles, barres du défi. Transform/opacity seulement. `prefers-reduced-motion` : animations coupées, état final tout de suite.
 - Mesuré (Chrome, 412×915, CPU ×4) : 60 images/s pendant l’animation de réussite.
 
-## Illustrations (partie A, à venir d’Atelier assets)
-Le jeu dessine tout en SVG pour l’instant. Pour brancher une image : la mettre au chemin ci-dessous, ajouter la même clé dans `ART` (`js/art.js`), l’ajouter à `ASSETS` dans `sw.js`, changer la version. Rien n’est demandé au réseau tant que `ART` est vide (pas de 404).
+## Illustrations (partie A, atelier-v4)
+Livrées par le bot **Atelier assets · 2D & 3D** le 16 nov. 2026 (direction approuvée par Pascal à 20 h 31, heure de Toronto). Gouache douce, sauge #6B8F71 et crème #F6EFDC, sans texte ni personnage. Détail fichier par fichier : `/workspace/assets/atelier-preuves/MANIFEST.md` (sur la box).
 
-| Clé | Fichier attendu | Taille conseillée |
+| Usage | Fichiers | Poids |
 |---|---|---|
-| `garden.fond` | `assets/art/garden/fond.webp` | 1200×960 (ratio 400:320), sans plantes |
-| `garden.bonus` | `assets/art/garden/bonus.webp` | 1200×360 (réservé) |
-| `plants.<nom>` | `assets/art/plants/<nom>.webp` pour galets, mousse, bambou, iris, fougere, lotus, pierre, lanterne, erable, pin, cerisier, bonsai, tsukubai, pont, koi | 400×400, fond transparent, base au centre en bas |
-| `intros.niveau-N` | `assets/art/intros/niveau-1.webp` … `niveau-4.webp` | 1200×420 (ratio 400:140) |
-| `icons.<nom>` | `assets/art/icons/<nom>.svg` pour sub, det, avant, arriere, indice, jardin, defi, son | 24×24 |
+| Fond du jardin (12 emplacements) | `assets/art/garden/fond.webp` (800×640, écrans ≥ 1,5x comme le S20) ou `fond-400.webp` (1x), choisi selon `devicePixelRatio` | 48,5 Ko / 13 Ko |
+| Coin bonus au bord de l’eau (niveau 4) | `assets/art/garden/bonus.webp` (800×240) ou `bonus-400.webp` | 20,5 Ko / 5,4 Ko |
+| 15 plantes × 3 stades | `assets/art/plants/<nom>-seed|sprout|bloom.webp` (384×384, transparent) | 384 Ko |
+| Intros de niveau | `assets/art/intros/niveau-1…4.webp` (800×400) | 88 Ko |
+| Icônes d’interface | `assets/art/icons/*.svg`, copiées en ligne dans `js/icons.js` (currentColor) | < 3 Ko |
+| Icône d’application | `icon-192.png`, `icon-512.png`, `icon-512-maskable.png`, `icon.svg` | 252 Ko |
 
-La pousse animée s’applique aussi aux images (classe `grow` sur l’`<img>`).
+- **Stades** : graine = pas encore prouvé ; germe (qui respire doucement) = le prochain théorème à prouver ; floraison = prouvé. Écran de réussite : graine → germe → floraison enchaînés (CSS), puis balancement.
+- **Branchement** : `js/art.js` (ART, `plantUrl`, `gardenBg`), `js/garden.js` (`spot`, `gardenSvg`, `bonusGardenSvg`, `plantGrow`, `introArt`). Si une entrée manque, retour au dessin SVG.
+- **Cache** : au premier affichage, seul le nécessaire est téléchargé (fond, plantes visibles). Le service worker met ensuite en cache, en arrière-plan et un fichier à la fois, toutes les plantes, intros, fonds et la musique (`LATER` dans `sw.js`) : tout marche hors ligne après une visite.
+- Pas utilisés : `garden/portrait.webp` (720×1280, autre disposition des emplacements), doublons `@2x` et `<nom>.webp` (= floraison).
 
 ## Ressources et licences
 - Axiomes et théorèmes : *Principia Mathematica*, Whitehead et Russell (1910), domaine public.
 - Musique `assets/audio/jardin.*` : générée le 16 nov. 2026 avec MusicGen (`facebook/musicgen-small`, Meta ; code MIT, poids CC BY-NC 4.0 : usage non commercial) sur la box, invite : « gentle japanese zen garden music, soft koto melody, warm low flute, light hand drum, steady calm tempo, relaxing, continuous, loopable, instrumental, no vocals ». Puis ffmpeg : fondu enchaîné fin → début (3 s), compression douce, normalisation à −20 LUFS, crête −3 dBFS.
 - Effets sonores : synthétisés par `js/audio.js` (code du jeu).
+- Illustrations, icônes et icône d’application : créées pour ce jeu par le bot Atelier assets (images générées par IA puis retouchées, originales, aucune ressource de tiers ; voir MANIFEST.md).
 - Aucune dépendance npm, aucun CDN.
 
 ## État
@@ -71,7 +76,9 @@ La pousse animée s’applique aussi aux images (classe `grow` sur l’`<img>`).
 - Une preuve en cours n’est pas sauvegardée (elle est courte) ; on reprend au même théorème.
 - Pas de chrono.
 
+- Version 4 (`atelier-v4`) : illustrations d’Atelier assets branchées (jardin, 3 stades par plante, coin bonus, intros, icônes), accueil retravaillé autour du jardin.
+
 ## Prochaines idées
-- Partie A : illustrations d’Atelier assets (jardin, plantes, intros, icônes), puis polissage des écrans.
+- Petites animations image par image des plantes (balancement, floraison) si Atelier assets les fait.
 - Défi « sans indice » ou avec étoiles (1 étoile = battre la machine, 3 = preuve parfaite).
 - *2.15 à *2.17 (contraposition) en niveau 5, si le moteur peut les prouver.

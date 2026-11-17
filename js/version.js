@@ -1,1 +1,1 @@
-export const VERSION = 'atelier-v3';
+export const VERSION = 'atelier-v4';
